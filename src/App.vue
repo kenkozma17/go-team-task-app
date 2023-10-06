@@ -36,14 +36,14 @@ export default defineComponent({
     const testData = ref();
 
     async function onLogin() {
-      await axios.get("http://localhost:80/sanctum/csrf-cookie");
-      await axios.post("http://localhost:80/login", {
+      await axios.get("https://task-api.kenkozma.dev/sanctum/csrf-cookie");
+      await axios.post("https://task-api.kenkozma.dev/login", {
         email: form.value.email,
         password: form.value.password,
       });
 
-      let { data } = await axios.get("http://localhost:80/api/user");
-      let test = await axios.get("http://localhost:80/api/test");
+      let { data } = await axios.get("https://task-api.kenkozma.dev/api/user");
+      let test = await axios.get("https://task-api.kenkozma.dev/api/test");
 
       testData.value = test.data;
       user.value = data;
