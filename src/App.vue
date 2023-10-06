@@ -3,8 +3,56 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
   </nav>
-  <router-view />
+  <form @submit.prevent="onLogin">
+    {{ user }}
+    {{ testData }}
+    <div>
+      <label for="email">Email</label>
+      <input type="email" v-model="form.email" />
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input type="password" v-model="form.password" />
+    </div>
+    <button>Login</button>
+  </form>
+  <!-- <router-view /> -->
 </template>
+
+<script lang="ts">
+import axios from "axios";
+import { defineComponent, ref } from "vue";
+
+axios.defaults.withCredentials = true;
+
+export default defineComponent({
+  setup() {
+    const form = ref({
+      email: null,
+      password: null,
+    });
+
+    const user = ref();
+    const testData = ref();
+
+    async function onLogin() {
+      await axios.get("http://localhost:80/sanctum/csrf-cookie");
+      await axios.post("http://localhost:80/login", {
+        email: form.value.email,
+        password: form.value.password,
+      });
+
+      let { data } = await axios.get("http://localhost:80/api/user");
+      let test = await axios.get("http://localhost:80/api/test");
+
+      testData.value = test.data;
+      user.value = data;
+    }
+
+    return { form, user, onLogin, testData };
+  },
+});
+</script>
 
 <style lang="scss">
 #app {
