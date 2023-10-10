@@ -1,14 +1,14 @@
 <template>
   <div class="p-10">
     <div class="grid grid-cols-3 items-start gap-x-2">
-      <TaskList v-for="status in taskStatuses" :key="status.name">
+      <TaskList v-for="status in taskStore.taskStatuses" :key="status.name">
         <TaskListTitle>{{ status.name }}</TaskListTitle>
         <draggable
           class="space-y-2"
           v-model="status.tasks"
           :item-key="status.slug"
-          @start="console.log('start')"
-          @end="console.log('end')"
+          :component-data="{ statusId: status.id }"
+          @add="sortTask"
           group="tasks"
           ghost-class="ghost-card"
         >
@@ -17,8 +17,10 @@
               <TaskCard
                 class="cursor-move"
                 :title="element.title"
+                :taskId="element.id"
                 :description="element.description"
-                :date="element.due_date"
+                :dueDate="element.due_date"
+                :statusId="element.status_id"
                 :key="element.id"
               />
             </div>
@@ -38,6 +40,8 @@ import TaskList from "@/components/task/TaskList.vue";
 import TaskListTitle from "@/components/task/TaskListTitle.vue";
 import draggable from "vuedraggable";
 import { useTaskStore } from "@/stores/tasks";
+import { useAuthStore } from "@/stores/authentification";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "HomeView",
@@ -50,14 +54,32 @@ export default defineComponent({
   },
   setup() {
     const taskStore = useTaskStore();
-    const taskStatuses = ref([]);
+    const authStore = useAuthStore();
+    const router = useRouter();
 
-    onMounted(async () => {
-      const { data } = await taskStore.getTaskStatuses();
-      taskStatuses.value = data;
+    const sortTask = async (e) => {
+      await taskStore.sortTask({
+        taskId: e.item._underlying_vm_.id,
+        newStatusId: e.to.attributes.statusid.value,
+      });
+    };
+
+    window.Echo.channel("task-sorted").listen("TaskSorted", (e) => {
+      taskStore.getTaskStatuses();
     });
 
-    return { taskStatuses };
+    onMounted(async () => {
+      try {
+        await taskStore.getTaskStatuses();
+      } catch (err) {
+        if (err.response.status === 401) {
+          authStore.$reset();
+          router.push({ name: "login" });
+        }
+      }
+    });
+
+    return { taskStore, sortTask };
   },
 });
 </script>

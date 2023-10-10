@@ -65,9 +65,14 @@ export default defineComponent({
       statusId: props.statusId,
     });
 
+    window.Echo.channel("new-task-added").listen("NewTaskAdded", (e) => {
+      taskStore.getTaskStatuses();
+    });
+
     const toggleAddingTask = () => (isAddingTask.value = !isAddingTask.value);
 
     const createTask = async () => {
+      isAddingTask.value = false;
       await taskStore.createTask(task.value);
     };
     return { isAddingTask, toggleAddingTask, createTask, task };

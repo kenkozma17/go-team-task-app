@@ -2,7 +2,7 @@
   <div class="md:mt-60">
     <form @submit.prevent="login">
       <h1 class="text-black text-center text-[3rem] font-bold">Login</h1>
-      <div class="bg-dark-gray md:w-1/2 p-4 rounded-md mx-auto">
+      <div class="bg-dark-gray md:w-1/4 p-4 rounded-md mx-auto">
         <div class="mb-4">
           <label class="block text-sm font-bold mb-2" for="email">
             Email
@@ -10,6 +10,7 @@
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="email"
+            v-model="user.email"
             type="text"
             placeholder="Email"
           />
@@ -21,6 +22,7 @@
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="password"
+            v-model="user.password"
             type="password"
             placeholder="Password"
           />
@@ -38,7 +40,7 @@
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 
-import { useAuthStore } from "@/stores/authentication";
+import { useAuthStore } from "@/stores/authentification";
 
 export default defineComponent({
   setup() {

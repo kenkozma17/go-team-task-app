@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import { useAuthStore } from "@/stores/authentication";
+import { useAuthStore } from "@/stores/authentification";
 
 const routes: Array<RouteRecordRaw> = [
   {
