@@ -84,22 +84,24 @@ export default defineComponent({
     const taskStore = useTaskStore();
 
     const isAddingTask = ref(false);
-    const initalTaskState = {
+    const task = ref({
       title: "",
       description: "",
       date: "",
       statusId: props.statusId,
-    };
-    const task = ref({ ...initalTaskState });
+    });
     const errorsList = ref([]);
 
     const toggleAddingTask = () => (isAddingTask.value = !isAddingTask.value);
+    const clearForm = () => {
+      task.value.title = task.value.description = task.value.date = "";
+    };
 
     const createTask = async () => {
       try {
         await taskStore.createTask(task.value);
         isAddingTask.value = false;
-        Object.assign(task, initalTaskState);
+        clearForm();
         toast.success("Task Created Successfully!");
       } catch (err) {
         if (err.response.status === 422) {
