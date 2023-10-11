@@ -9,7 +9,7 @@
           <span class="font-semibold">
             {{ $props.title }}
           </span>
-          <PenIcon
+          <div
             @click="
               editTask({
                 taskId: $props.taskId,
@@ -19,8 +19,11 @@
                 date: $props.dueDate,
               })
             "
-            class="md:hidden group-hover:block w-4 h-4 cursor-pointer"
-          />
+          >
+            <PenIcon
+              class="md:hidden group-hover:block w-4 h-4 cursor-pointer"
+            />
+          </div>
         </div>
         <TaskDescription class="text-sm">
           {{ $props.description }}
