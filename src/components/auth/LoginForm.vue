@@ -1,5 +1,5 @@
 <template>
-  <div class="md:mt-60">
+  <div class="md:mt-60 px-4 mt-20">
     <form @submit.prevent="login">
       <h1 class="text-black text-center text-[3rem] font-bold">Login</h1>
       <div class="bg-dark-gray md:w-1/4 p-4 rounded-md mx-auto">

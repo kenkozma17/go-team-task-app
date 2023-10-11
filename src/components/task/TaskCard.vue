@@ -19,7 +19,7 @@
                 date: $props.dueDate,
               })
             "
-            class="hidden group-hover:block w-4 h-4 cursor-pointer"
+            class="md:hidden group-hover:block w-4 h-4 cursor-pointer"
           />
         </div>
         <TaskDescription class="text-sm">
