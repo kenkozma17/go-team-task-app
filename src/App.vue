@@ -18,6 +18,7 @@ export default defineComponent({
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: black;
+  max-height: 100vh;
 }
 
 nav {

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 md:block flex overflow-x-scroll">
+  <div class="p-4 md:block flex overflow-x-scroll h-screen">
     <div class="md:grid flex md:grid-cols-3 items-start gap-x-2">
       <TaskList
         class="md:w-full w-[90vw]"
