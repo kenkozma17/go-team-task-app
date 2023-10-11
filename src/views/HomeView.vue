@@ -19,6 +19,8 @@
           :item-key="status.slug"
           :component-data="{ statusId: status.id }"
           @add="sortTask"
+          :delay="1000"
+          :delayOnTouchOnly="true"
           group="tasks"
           ghost-class="ghost-card"
         >
@@ -107,8 +109,8 @@ export default defineComponent({
 }
 .draggable-element {
   max-height: calc(100vh - 10.5rem);
-  @media only screen and (max-width: 768px) {
+  /* @media only screen and (max-width: 768px) {
     max-height: calc(100vh - 13rem);
-  }
+  } */
 }
 </style>
