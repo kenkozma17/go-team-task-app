@@ -1,10 +1,20 @@
 <template>
-  <div class="p-10">
-    <div class="grid grid-cols-3 items-start gap-x-2">
-      <TaskList v-for="status in taskStore.taskStatuses" :key="status.name">
+  <div class="p-4 md:block flex overflow-x-scroll">
+    <div class="md:grid flex md:grid-cols-3 items-start gap-x-2">
+      <TaskList
+        class="md:w-full w-[90vw]"
+        v-for="status in taskStore.taskStatuses"
+        :key="status.name"
+      >
         <TaskListTitle>{{ status.name }}</TaskListTitle>
+        <AddTask :key="status.name" :statusId="status.id">Add a Task</AddTask>
         <draggable
-          class="space-y-2"
+          class="space-y-4 py-2 draggable-element overflow-y-scroll"
+          :class="
+            status.tasks.length === 0
+              ? 'border-blue-400 border rounded-md p-2 border-dotted text-center my-2'
+              : ''
+          "
           v-model="status.tasks"
           :item-key="status.slug"
           :component-data="{ statusId: status.id }"
@@ -20,13 +30,13 @@
                 :taskId="element.id"
                 :description="element.description"
                 :dueDate="element.due_date"
+                :formattedDate="element.formatted_date"
                 :statusId="element.status_id"
                 :key="element.id"
               />
             </div>
           </template>
         </draggable>
-        <AddTask :key="status.name" :statusId="status.id">Add a Task</AddTask>
       </TaskList>
     </div>
   </div>
@@ -42,6 +52,7 @@ import draggable from "vuedraggable";
 import { useTaskStore } from "@/stores/tasks";
 import { useAuthStore } from "@/stores/authentification";
 import { useRouter } from "vue-router";
+import DropArea from "@/components/task/DropArea.vue";
 
 export default defineComponent({
   name: "HomeView",
@@ -58,10 +69,14 @@ export default defineComponent({
     const router = useRouter();
 
     const sortTask = async (e) => {
-      await taskStore.sortTask({
-        taskId: e.item._underlying_vm_.id,
-        newStatusId: e.to.attributes.statusid.value,
-      });
+      try {
+        await taskStore.sortTask({
+          taskId: e.item._underlying_vm_.id,
+          newStatusId: e.to.attributes.statusid.value,
+        });
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     window.Echo.channel("task-sorted").listen("TaskSorted", (e) => {
@@ -89,5 +104,8 @@ export default defineComponent({
   background: #f7fafc;
   border: 1px solid #4299e1;
   border-radius: 5px;
+}
+.draggable-element {
+  max-height: calc(100vh - 10.5rem);
 }
 </style>

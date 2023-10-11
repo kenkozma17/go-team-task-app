@@ -84,7 +84,7 @@ export const useTaskStore = defineStore("tasks", {
     }) {
       const { data } = await axios.post(
         `${process.env.VUE_APP_API_URL}/api/statuses/${taskId}`,
-        { data: { title, description, date }, _method: "put" }
+        { ...{ title, description, date }, _method: "put" }
       );
       return data;
     },
@@ -98,6 +98,12 @@ export const useTaskStore = defineStore("tasks", {
       const { data } = await axios.post(
         `${process.env.VUE_APP_API_URL}/api/statuses/${taskId}/sort`,
         { newStatusId }
+      );
+      return data;
+    },
+    async deleteTask(taskId: number) {
+      const { data } = await axios.delete(
+        `${process.env.VUE_APP_API_URL}/api/statuses/${taskId}`
       );
       return data;
     },

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex hover:bg-opacity-90 items-center justify-between group bg-dark-gray rounded-md p-3"
+    class="flex hover:bg-opacity-90 items-center justify-between group bg-white shadow-md rounded-md p-3"
   >
     <div class="w-full">
       <EditTask v-if="isEditting($props.taskId, $props.statusId)" />
@@ -28,7 +28,7 @@
         <TaskDueDate
           class="border-t border-white border-opacity-25 mt-1.5 pt-1.5"
         >
-          {{ $props.dueDate }}
+          {{ $props.formattedDate }}
         </TaskDueDate>
       </template>
     </div>
@@ -64,6 +64,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    formattedDate: {
+      type: String,
+      default: "",
+    },
     statusId: {
       type: Number,
       default: 0,
@@ -74,10 +78,6 @@ export default defineComponent({
     },
   },
   setup() {
-    window.Echo.channel("task-updated").listen("TaskUpdated", () =>
-      taskStore.getTaskStatuses()
-    );
-
     const taskStore = useTaskStore();
     const isEditting = (taskId: number, statusId: number) => {
       if (

@@ -4,14 +4,15 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import App from "./App.vue";
 import router from "./router";
 import "./index.css";
+import "vue3-toastify/dist/index.css";
 
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
 const options: { broadcaster: string; key: string; cluster: string } = {
   broadcaster: "pusher",
-  key: "518f4b28376a42913126",
-  cluster: "ap1", // Replace "your-cluster" with your actual Pusher cluster
+  key: process.env.VUE_APP_PUSHER_KEY,
+  cluster: process.env.VUE_APP_PUSHER_CLUSTER,
 };
 
 declare global {
