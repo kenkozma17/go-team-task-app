@@ -30,7 +30,9 @@
       </div>
       <div>
         <input
-          type="date"
+          type="text"
+          placeholder="Select Due Date"
+          onfocus="(this.type='date')"
           class="bg-dark-gray w-full rounded-md p-2"
           :class="errorsList?.date ? 'border-red-600' : ''"
           v-model="task.date"
