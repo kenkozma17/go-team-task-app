@@ -19,7 +19,7 @@
           :item-key="status.slug"
           :component-data="{ statusId: status.id }"
           @add="sortTask"
-          :delay="500"
+          :delay="250"
           :delayOnTouchOnly="true"
           group="tasks"
           ghost-class="ghost-card"
