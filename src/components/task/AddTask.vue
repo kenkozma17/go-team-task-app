@@ -5,41 +5,38 @@
       class="border-t border-black border-opacity-25 py-3 flex flex-col space-y-2"
     >
       <div>
-        <input
+        <BaseInput
           type="text"
           v-model="task.title"
-          class="p-3 bg-dark-gray w-full rounded-md"
-          :class="errorsList?.title ? 'border-red-600' : ''"
           placeholder="Task Title"
+          class="bg-dark-gray"
+          :hasError="!!errorsList?.title"
         />
-        <span class="text-red-600 text-xs" v-if="errorsList?.title">{{
-          errorsList.title[0]
-        }}</span>
+        <ErrorMessage v-if="errorsList?.title">
+          {{ errorsList.title[0] }}
+        </ErrorMessage>
       </div>
       <div>
-        <textarea
-          type="text"
+        <BaseTextArea
           v-model="task.description"
-          class="p-3 bg-dark-gray w-full rounded-md block"
-          :class="errorsList?.description ? 'border-red-600' : ''"
+          class="bg-dark-gray"
+          :hasError="!!errorsList?.description"
           placeholder="Task Description"
-        ></textarea>
-        <span class="text-red-600 text-xs" v-if="errorsList?.description">{{
-          errorsList.description[0]
-        }}</span>
+        />
+        <ErrorMessage v-if="errorsList?.description">
+          {{ errorsList.description[0] }}
+        </ErrorMessage>
       </div>
       <div>
-        <input
-          type="text"
+        <BaseDateInput
           placeholder="Select Due Date"
-          onfocus="(this.type='date')"
-          class="bg-dark-gray w-full rounded-md p-2"
-          :class="errorsList?.date ? 'border-red-600' : ''"
+          class="bg-dark-gray"
+          :hasError="!!errorsList?.date"
           v-model="task.date"
         />
-        <span class="text-red-600 text-xs" v-if="errorsList?.date">{{
-          errorsList.date[0]
-        }}</span>
+        <ErrorMessage v-if="errorsList?.date">
+          {{ errorsList.date[0] }}
+        </ErrorMessage>
       </div>
     </div>
 
@@ -72,6 +69,10 @@ import AddIcon from "@/components/icons/AddIcon.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
 import { useTaskStore } from "@/stores/tasks";
 import { toast } from "vue3-toastify";
+import ErrorMessage from "@/components/ui/ErrorMessage.vue";
+import BaseInput from "@/components/form/BaseInput.vue";
+import BaseTextArea from "@/components/form/BaseTextArea.vue";
+import BaseDateInput from "@/components/form/BaseDateInput.vue";
 
 export default defineComponent({
   props: {
@@ -94,7 +95,11 @@ export default defineComponent({
 
     const toggleAddingTask = () => (isAddingTask.value = !isAddingTask.value);
     const clearForm = () => {
-      task.value.title = task.value.description = task.value.date = "";
+      errorsList.value =
+        task.value.title =
+        task.value.description =
+        task.value.date =
+          "";
     };
 
     const createTask = async () => {
@@ -107,13 +112,11 @@ export default defineComponent({
         if (err.response.status === 422) {
           const { errors } = err.response.data;
           errorsList.value = errors;
+          return;
         }
+        toast.error("Whoops, something went wrong!");
       }
     };
-
-    window.Echo.channel("task-created").listen("TaskCreated", () => {
-      taskStore.getTaskStatuses();
-    });
 
     return { isAddingTask, toggleAddingTask, createTask, task, errorsList };
   },
@@ -121,6 +124,10 @@ export default defineComponent({
   components: {
     AddIcon,
     CloseIcon,
+    ErrorMessage,
+    BaseInput,
+    BaseTextArea,
+    BaseDateInput,
   },
 });
 </script>

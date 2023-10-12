@@ -28,17 +28,10 @@ export const useAuthStore = defineStore("auth", {
       await axios.get(`${process.env.VUE_APP_API_URL}/sanctum/csrf-cookie`);
     },
     async login({ email, password }: { email: string; password: string }) {
-      await this.getCookie();
-      try {
-        await axios.post(`${process.env.VUE_APP_API_URL}/login`, {
-          email: email,
-          password: password,
-        });
-        await this.getUser();
-        return { success: true };
-      } catch (err) {
-        return { success: false };
-      }
+      return await axios.post(`${process.env.VUE_APP_API_URL}/login`, {
+        email: email,
+        password: password,
+      });
     },
     async getUser() {
       await this.getCookie();

@@ -4,41 +4,38 @@
     class="border-opacity-25 flex flex-col space-y-2"
   >
     <div>
-      <input
+      <BaseInput
         type="text"
-        class="p-3 border-black border border-opacity-25 w-full rounded-md"
-        :class="errorsList?.title ? 'border-red-600' : ''"
         v-model="task.title"
         placeholder="Task Title"
+        class="border-black border border-opacity-25"
+        :hasError="!!errorsList?.title"
       />
-      <span class="text-red-600 text-xs" v-if="errorsList?.title">{{
-        errorsList.title[0]
-      }}</span>
+      <ErrorMessage v-if="errorsList?.title">
+        {{ errorsList.title[0] }}
+      </ErrorMessage>
     </div>
     <div>
-      <textarea
-        type="text"
+      <BaseTextArea
         v-model="task.description"
-        class="p-3 border-black block border border-opacity-25 w-full rounded-md"
-        :class="errorsList?.description ? 'border-red-600' : ''"
+        class="border-black block border border-opacity-25 w-full"
+        :hasError="!!errorsList?.description"
         placeholder="Task Description"
-      ></textarea>
-      <span class="text-red-600 text-xs" v-if="errorsList?.description">{{
-        errorsList.description[0]
-      }}</span>
+      />
+      <ErrorMessage v-if="errorsList?.description">
+        {{ errorsList.description[0] }}
+      </ErrorMessage>
     </div>
     <div>
-      <input
-        type="text"
-        class="border-black border border-opacity-25 w-full rounded-md p-2"
+      <BaseDateInput
         placeholder="Select Due Date"
-        onfocus="(this.type='date')"
-        :class="errorsList?.date ? 'border-red-600' : ''"
+        class="border-black border border-opacity-25 w-full"
+        :hasError="!!errorsList?.date"
         v-model="task.date"
       />
-      <span class="text-red-600 text-xs" v-if="errorsList?.date">{{
-        errorsList.date[0]
-      }}</span>
+      <ErrorMessage v-if="errorsList?.date">
+        {{ errorsList.date[0] }}
+      </ErrorMessage>
     </div>
     <div class="flex justify-between items-center my-4">
       <div class="flex space-x-2">
@@ -72,8 +69,19 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
 import { useTaskStore } from "@/stores/tasks";
 import { toast } from "vue3-toastify";
+import ErrorMessage from "@/components/ui/ErrorMessage.vue";
+
+import BaseInput from "@/components/form/BaseInput.vue";
+import BaseTextArea from "@/components/form/BaseTextArea.vue";
+import BaseDateInput from "@/components/form/BaseDateInput.vue";
 
 export default defineComponent({
+  components: {
+    ErrorMessage,
+    BaseInput,
+    BaseTextArea,
+    BaseDateInput,
+  },
   setup() {
     const taskStore = useTaskStore();
     const task = ref({
@@ -104,7 +112,9 @@ export default defineComponent({
         if (err.response.status === 422) {
           const { errors } = err.response.data;
           errorsList.value = errors;
+          return;
         }
+        toast.error("Whoops, something went wrong!");
       }
     };
 
@@ -118,20 +128,17 @@ export default defineComponent({
       });
     };
 
-    window.Echo.channel("task-updated").listen("TaskUpdated", (e) => {
-      taskStore.getTaskStatuses();
-    });
-
-    window.Echo.channel("task-deleted").listen("TaskDeleted", (e) => {
-      taskStore.getTaskStatuses();
-    });
-
     const deleteTask = async () => {
       try {
         await taskStore.deleteTask(task.value.taskId);
         toast.success("Task Deleted Successfully!");
       } catch (err) {
-        console.log(err);
+        if (err.response.status === 422) {
+          const { message } = err.response.data;
+          toast.error(message);
+          return;
+        }
+        toast.error("Whoops, something went wrong!");
       }
     };
 

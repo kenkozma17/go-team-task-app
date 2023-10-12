@@ -55,6 +55,7 @@ import { useTaskStore } from "@/stores/tasks";
 import { useAuthStore } from "@/stores/authentification";
 import { useRouter } from "vue-router";
 import DropArea from "@/components/task/DropArea.vue";
+import { toast } from "vue3-toastify";
 
 export default defineComponent({
   name: "HomeView",
@@ -77,11 +78,28 @@ export default defineComponent({
           newStatusId: e.to.attributes.statusid.value,
         });
       } catch (err) {
-        console.log(err);
+        if (err.response.status === 422) {
+          const { message } = err.response.data;
+          toast.error(message);
+          return;
+        }
+        toast.error("Whoops, something went wrong!");
       }
     };
 
     window.Echo.channel("task-sorted").listen("TaskSorted", (e) => {
+      taskStore.getTaskStatuses();
+    });
+
+    window.Echo.channel("task-updated").listen("TaskUpdated", () => {
+      taskStore.getTaskStatuses();
+    });
+
+    window.Echo.channel("task-deleted").listen("TaskDeleted", () => {
+      taskStore.getTaskStatuses();
+    });
+
+    window.Echo.channel("task-created").listen("TaskCreated", () => {
       taskStore.getTaskStatuses();
     });
 
