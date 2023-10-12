@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex hover:bg-opacity-90 items-center justify-between group bg-white shadow-md rounded-md p-3"
+    class="flex hover:bg-opacity-90 items-center justify-between group bg-white shadow-md hover:border hover:border-blue-300 focus:border-blue-600 active:border-2 rounded-md p-3"
   >
     <div class="w-full">
       <EditTask v-if="isEditting($props.taskId, $props.statusId)" />
